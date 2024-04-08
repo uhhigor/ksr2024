@@ -63,6 +63,10 @@ public class ArticleManager {
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
+
+                title = title.toLowerCase();
+                body = body.toLowerCase();
+
                 String[] d = places.split("<D>");
                 if(d.length > 2 || d.length == 1) {
                     continue;
