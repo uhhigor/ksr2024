@@ -2,7 +2,7 @@ package org.example.modules.featureExtraction;
 
 import java.util.HashMap;
 
-public class FeaturesManager {
+class FeaturesManager {
     private static FeaturesManager instance;
 
     private FeaturesManager() {
@@ -27,6 +27,7 @@ public class FeaturesManager {
         featuresVector.setC8(numberOfEventsInText(article));
         featuresVector.setC9(numberOfUniqueWords(article));
         featuresVector.setC10(mostFrequentWord(article));
+        featuresVector.normalize();
         return featuresVector;
 
     }

@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-public class ArticleManager {
+class ArticleManager {
     private static ArticleManager instance;
 
     private final List<Article> articles = new ArrayList<>();

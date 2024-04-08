@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StopWordsManager {
+class StopWordsManager {
     private static StopWordsManager instance;
 
     private List<String> stopWords = new ArrayList<>();

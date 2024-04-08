@@ -1,25 +1,35 @@
 package org.example.modules.featureExtraction;
 
 public class FeaturesVector {
+
+    private String country;
     private String c1; // Nazwa kraju w tytule artykułu
     private String c2; // Nazwa stolicy w tekście
     private String c3; // Nazwa kontynentu w tekście
 
     private boolean c4; // Czy w tekście występuje waluta dolar
 
-    private int c5; // Liczba imion i (lub) nazwisk polityków w tekście
+    private float c5; // Liczba imion i (lub) nazwisk polityków w tekście
 
     private float c6; // Średnia długość wyrazów w tekście
 
-    private int c7; // Liczba wyrazów w tekście
+    private float c7; // Liczba wyrazów w tekście
 
-    private int c8; // Liczba wspomnień o ważnych wydarzeniach i świętach w tekście
+    private float c8; // Liczba wspomnień o ważnych wydarzeniach i świętach w tekście
 
-    private int c9; // Liczba unikalnych wyrazów w tekście
+    private float c9; // Liczba unikalnych wyrazów w tekście
 
     private String c10; // Najczęściej występujące słowo w tekście
 
     public FeaturesVector() {
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getC1() {
@@ -54,7 +64,7 @@ public class FeaturesVector {
         this.c4 = c4;
     }
 
-    public int getC5() {
+    public float getC5() {
         return c5;
     }
 
@@ -70,23 +80,23 @@ public class FeaturesVector {
         this.c6 = c6;
     }
 
-    public int getC7() {
+    public float getC7() {
         return c7;
     }
 
-    public void setC7(int c7) {
+    public void setC7(float c7) {
         this.c7 = c7;
     }
 
-    public int getC8() {
+    public float getC8() {
         return c8;
     }
 
-    public void setC8(int c8) {
+    public void setC8(float c8) {
         this.c8 = c8;
     }
 
-    public int getC9() {
+    public float getC9() {
         return c9;
     }
 
@@ -115,5 +125,15 @@ public class FeaturesVector {
                 ", c9=" + c9 +
                 ", c10='" + c10 + '\'' +
                 '}';
+    }
+
+    public void normalize() {
+        float max = Math.max(c5, Math.max(c6, Math.max(c7, Math.max(c8, c9))));
+        float min = Math.min(c5, Math.min(c6, Math.min(c7, Math.min(c8, c9))));
+        c5 = (c5 - min) / (max - min);
+        c6 = (c6 - min) / (max - min);
+        c7 = (c7 - min) / (max - min);
+        c8 = (c8 - min) / (max - min);
+        c9 = (c9 - min) / (max - min);
     }
 }
