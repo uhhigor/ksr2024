@@ -72,10 +72,10 @@ class ArticleManager {
                     continue;
                 }
                 String place = d[1].split("</D>")[0];
-                Country country;
-                try {
-                    country = Country.valueOf(place);
-                } catch (IllegalArgumentException e) {
+                String country;
+                if(place.equals("west-germany") || place.equals("usa") || place.equals("france") || place.equals("uk") || place.equals("canada") || place.equals("japan")) {
+                    country = place;
+                } else {
                     continue;
                 }
                 for(String stopWord : StopWordsManager.getInstance().getStopWords()) {

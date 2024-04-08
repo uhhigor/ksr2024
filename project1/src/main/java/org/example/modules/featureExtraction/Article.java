@@ -2,17 +2,17 @@ package org.example.modules.featureExtraction;
 
 public class Article {
 
-    private final Country country;
+    private final String country;
     private String title;
     private String body;
 
-    public Article(Country country, String title, String content) {
+    public Article(String country, String title, String content) {
         this.country = country;
         this.title = title;
         this.body = content;
     }
 
-    public Country getCountry() {
+    public String getCountry() {
         return country;
     }
 
