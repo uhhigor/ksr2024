@@ -78,6 +78,11 @@ public class ArticleManager {
                     title = title.replaceAll("\\b" + stopWord + "\\b", "");
                     body = body.replaceAll("\\b" + stopWord + "\\b", "");
                 }
+                title = title.replaceAll("[^a-zA-Z ]", " ");
+                body = body.replaceAll("[^a-zA-Z ]", " ");
+                title = title.replaceAll(("\\s+"), " ");
+                body = body.replaceAll(("\\s+"), " ");
+
                 articles.add(new Article(country, title, body));
             }
         }
