@@ -16,8 +16,9 @@ public class Main {
         FeatureExtractionModule featureExtractionModule = new FeatureExtractionModule(STOP_WORDS_PATH, ARTICLES_PATH);
         List<FeaturesVector> list = featureExtractionModule.getExtractedFeatures();
         System.out.println(list.size());
+        list.forEach(System.out::println);
 
-        ClassifierModule classifierModule = new ClassifierModule(6, list.subList(0, 500), new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, new EuklidesMetric(), 30, 70);
+        ClassifierModule classifierModule = new ClassifierModule(5, list.subList(0, 1000), new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, new EuklidesMetric(), 50, 50);
         classifierModule.classify();
     }
 }

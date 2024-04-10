@@ -37,10 +37,10 @@ class FeaturesManager {
     }
 
     private String extractCountryNameFromTitle(Article article) {
-        String[] westgermany = {"west-germany", "west-german", "german", "germany", "west germany", "west german"};
-        String[] usa = {"usa", "us", "united states", "united states of america", "america", "american"};
+        String[] westgermany = {"west-germany", "west-german", "german", "germany"};
+        String[] usa = {"usa", "us", "america", "american"};
         String[] france = {"france", "french"};
-        String[] uk = {"uk", "united kingdom", "britain", "british", "great britain"};
+        String[] uk = {"uk", "united", "kingdom", "britain", "british", "great", "england"};
         String[] canada = {"canada", "canadian"};
         String[] japan = {"japan", "japanese"};
         List<String> title = article.getTitle();
@@ -102,10 +102,11 @@ class FeaturesManager {
 
     private Boolean isDollarInText(Article article) {
         List<String> text = article.getBody();
-        String[] dollarSynonyms = {"dollar", "usd", "us dollar", "us dollars", "dollar's", "dollars", "dlr", "dlrs"};
-        for (String s : dollarSynonyms)
+        String[] dollarSynonyms = {"dollar", "usd", "dollars", "dlr", "dlrs"};
+        for (String s : dollarSynonyms) {
             if (text.contains(s))
                 return true;
+        }
         return false;
     }
 
@@ -118,9 +119,12 @@ class FeaturesManager {
         "Jacques Chirac", "François Mitterrand", "Jacques Delors", "Édouard Balladur", "Alain Juppé", "Pierre Bérégovoy",
                 "Margaret Thatcher", "Neil Kinnock", "John Major", "Michael Heseltine", "Douglas Hurd", "Nigel Lawson"};
         int count = 0;
-        for (String s : politicians)
-            if (text.contains(s.toLowerCase()))
-                count++;
+        for (String s : politicians) {
+            String[] tokens = s.toLowerCase().split(" ");
+            for (String token : tokens)
+                if (text.contains(token))
+                    count++;
+        }
         return (double) count;
     }
 
@@ -141,9 +145,13 @@ class FeaturesManager {
         List<String> text = article.getBody();
         String[] events = {"Christmas", "Thanksgiving", "Independence Day", "New Year’s Day", "Memorial Day", "Labor Day", "Oktoberfest", "German Unity Day", "Carnival", "Easter", "Pentecost", "Golden Week", "Obon Festival", "Tanabata", "Hanami", "Shichi-Go-San", "Canada Day", "Victoria Day", "Remembrance Day", "Labour Day", "Thanksgiving", "Christmas", "Bastille Day", "Armistice Day", "Easter", "Christmas", "New Year’s Day", "Ascension Day", "Christmas", "New Year’s Day", "Remembrance Day", "Bonfire Night", "Easter", "Trooping the Colour"};
         int count = 0;
-        for (String s : events)
-            if (text.contains(s.toLowerCase()))
-                count++;
+        for (String s : events) {
+            String[] tokens = s.toLowerCase().split(" ");
+            for (String token : tokens) {
+                if (text.contains(token))
+                    count++;
+            }
+        }
         return (double) count;
     }
 
