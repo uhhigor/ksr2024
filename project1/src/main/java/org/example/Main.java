@@ -6,8 +6,9 @@ import org.example.modules.featureExtraction.exceptions.StopWordsManagerExceptio
 
 public class Main {
     public static void main(String[] args) throws ArticleManagerException, StopWordsManagerException {
-        FeatureExtractionModule.loadStopWords("/Users/igorbobrukiewicz/Downloads/stopwords.txt");
-        FeatureExtractionModule.loadArticles("/Users/igorbobrukiewicz/Downloads/reuters+21578+text+categorization+collection/reuters21578");
-        FeatureExtractionModule.getExtractedFeatures().forEach(System.out::println);
+        final String STOP_WORDS_PATH = "/Users/igorbobrukiewicz/Downloads/stopwords.txt";
+        final String ARTICLES_PATH = "/Users/igorbobrukiewicz/Downloads/reuters+21578+text+categorization+collection/reuters21578";
+        FeatureExtractionModule featureExtractionModule = new FeatureExtractionModule(STOP_WORDS_PATH, ARTICLES_PATH);
+        featureExtractionModule.getExtractedFeatures().forEach(System.out::println);
     }
 }
