@@ -79,6 +79,9 @@ public class ClassifierModule {
         System.out.println("Precision: " + Arrays.toString(quality.calculateCountryPrecision()));
         System.out.println("Recall: " + Arrays.toString(quality.calculateCountryRecall()));
         System.out.println("F1: " + Arrays.toString(quality.calculateCountryF1Score()));
+        System.out.println("Precision average: " + quality.calculateWeightedAveragePrecision());
+        System.out.println("Recall average: " + quality.calculateWeightedAverageRecall());
+        System.out.println("F1 average: " + quality.calculateWeightedAverageF1Score());
     }
 
 

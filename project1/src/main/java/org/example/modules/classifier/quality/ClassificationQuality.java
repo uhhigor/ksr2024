@@ -9,12 +9,14 @@ public class ClassificationQuality {
     HashMap<String, Integer> tpMap = new HashMap<>();
     HashMap<String, Integer> fpMap = new HashMap<>();
     HashMap<String, Integer> fnMap = new HashMap<>();
+    HashMap<String, Integer> realMap = new HashMap<>();
 
     public ClassificationQuality(List<String> predicted, List<String> real) {
         if (predicted.size() != real.size()) {
             throw new IllegalArgumentException("Predicted and real lists must have the same size");
         }
         this.populationSize = predicted.size();
+
         createMap(predicted, real);
     }
 
@@ -25,11 +27,13 @@ public class ClassificationQuality {
             tpMap.put(label, 0);
             fpMap.put(label, 0);
             fnMap.put(label, 0);
+            realMap.put(label, 0);
         }
 
         for (int i = 0; i < predicted.size(); i++) {
             String pred = predicted.get(i);
             String realLabel = real.get(i);
+            realMap.put(realLabel, realMap.get(realLabel) + 1);
             if (pred.equals(realLabel)) {
                 tpMap.put(pred, tpMap.get(pred) + 1);
             } else {
@@ -41,6 +45,7 @@ public class ClassificationQuality {
         System.out.println("TP: " + tpMap);
         System.out.println("FP: " + fpMap);
         System.out.println("FN: " + fnMap);
+        System.out.println("REAL: " + realMap);
     }
 
     public double calculateAccuracy() {
@@ -86,4 +91,30 @@ public class ClassificationQuality {
         return f1Score;
     }
 
+    public double calculateWeightedAveragePrecision() {
+        double [] precision = calculateCountryPrecision();
+        return calculateQualityAverage(precision);
+    }
+
+    public double calculateWeightedAverageRecall() {
+        double [] recall = calculateCountryRecall();
+        return calculateQualityAverage(recall);
+    }
+
+    public double calculateWeightedAverageF1Score() {
+        double [] f1Score = calculateCountryF1Score();
+        return calculateQualityAverage(f1Score);
+    }
+
+    private double calculateQualityAverage(double[] quality) {
+        double [] real = new double[6];
+        for (int i = 0; i < 6; i++) {
+            real[i] = (double) realMap.get(realMap.keySet().toArray()[i].toString());
+        }
+        double weightedAveragePrecision = 0;
+        for (int i = 0; i < 6; i++) {
+            weightedAveragePrecision += quality[i] * real[i];
+        }
+        return weightedAveragePrecision / populationSize;
+    }
 }
