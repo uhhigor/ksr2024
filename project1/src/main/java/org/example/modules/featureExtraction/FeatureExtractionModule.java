@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FeatureExtractionModule {
     public static void loadStopWords(String path) throws StopWordsManagerException {
-        StopWordsManager.getInstance().loadFromFile(path);
+        NLPUtils.getInstance().loadStopWordsFromFile(path);
     }
 
     public static void loadArticles(String path) throws ArticleManagerException {

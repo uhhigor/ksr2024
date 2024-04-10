@@ -53,21 +53,18 @@ class ArticleManager {
                 if (content.isBlank())
                     continue;
                 content = content.split("</REUTERS>")[0];
-                String title;
-                String body;
-                String places;
+                String titleText;
+                String bodyText;
+                String placesText;
                 try {
-                    title = content.split("<TITLE>")[1].split("</TITLE>")[0];
-                    body = content.split("<BODY>")[1].split("</BODY>")[0];
-                    places = content.split("<PLACES>")[1].split("</PLACES>")[0];
+                    titleText = content.split("<TITLE>")[1].split("</TITLE>")[0];
+                    bodyText = content.split("<BODY>")[1].split("</BODY>")[0];
+                    placesText = content.split("<PLACES>")[1].split("</PLACES>")[0];
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
 
-                title = title.toLowerCase();
-                body = body.toLowerCase();
-
-                String[] d = places.split("<D>");
+                String[] d = placesText.split("<D>");
                 if(d.length > 2 || d.length == 1) {
                     continue;
                 }
@@ -78,14 +75,12 @@ class ArticleManager {
                 } else {
                     continue;
                 }
-                for(String stopWord : StopWordsManager.getInstance().getStopWords()) {
-                    title = title.replaceAll("\\b" + stopWord + "\\b", "");
-                    body = body.replaceAll("\\b" + stopWord + "\\b", "");
-                }
-                title = title.replaceAll("[^a-zA-Z ]", " ");
-                body = body.replaceAll("[^a-zA-Z ]", " ");
-                title = title.replaceAll(("\\s+"), " ");
-                body = body.replaceAll(("\\s+"), " ");
+
+                List<String> title = NLPUtils.getInstance().tokenize(titleText);
+                List<String> body = NLPUtils.getInstance().tokenize(bodyText);
+
+                title = NLPUtils.getInstance().removeStopWords(title);
+                body = NLPUtils.getInstance().removeStopWords(body);
 
                 articles.add(new Article(country, title, body));
             }

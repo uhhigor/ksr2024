@@ -7,22 +7,22 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-class StopWordsManager {
-    private static StopWordsManager instance;
+class NLPUtils {
+    private static NLPUtils instance;
 
     private List<String> stopWords = new ArrayList<>();
 
-    private StopWordsManager() {
+    private NLPUtils() {
     }
 
-    public static StopWordsManager getInstance() {
+    public static NLPUtils getInstance() {
         if (instance == null) {
-            instance = new StopWordsManager();
+            instance = new NLPUtils();
         }
         return instance;
     }
 
-    public void loadFromFile(String path) throws StopWordsManagerException {
+    public void loadStopWordsFromFile(String path) throws StopWordsManagerException {
         try {
             stopWords = Files.readAllLines(Path.of(path));
         } catch (Exception e) {
@@ -30,8 +30,14 @@ class StopWordsManager {
         }
     }
 
-    public List<String> getStopWords() {
-        return stopWords.stream().toList();
+    public List<String> tokenize(String text) {
+        text = text.toLowerCase().replaceAll("[^a-zA-Z0-9]", " ");
+        return new ArrayList<>(List.of(text.split("\\s+")));
+    }
+
+    public List<String> removeStopWords(List<String> tokens) {
+        tokens.removeAll(stopWords);
+        return tokens;
     }
 
 }

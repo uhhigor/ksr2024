@@ -1,12 +1,14 @@
 package org.example.modules.featureExtraction;
 
+import java.util.List;
+
 public class Article {
 
     private final String country;
-    private String title;
-    private String body;
+    private List<String> title;
+    private List<String> body;
 
-    public Article(String country, String title, String content) {
+    public Article(String country, List<String> title, List<String> content) {
         this.country = country;
         this.title = title;
         this.body = content;
@@ -16,19 +18,19 @@ public class Article {
         return country;
     }
 
-    public String getTitle() {
+    public List<String> getTitle() {
         return title;
     }
 
-    public String getBody() {
+    public List<String> getBody() {
         return body;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(List<String> title) {
         this.title = title;
     }
 
-    public void setBody(String body) {
+    public void setBody(List<String> body) {
         this.body = body;
     }
 
