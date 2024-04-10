@@ -1,5 +1,7 @@
 package org.example.modules.featureExtraction;
 
+import org.example.modules.featureExtraction.exceptions.FeaturesVectorException;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,18 +18,19 @@ class FeaturesManager {
         return instance;
     }
 
-    public FeaturesVector extractFeatures(Article article) {
+    public FeaturesVector extractFeatures(Article article) throws FeaturesVectorException {
         FeaturesVector featuresVector = new FeaturesVector();
-        featuresVector.setC1(extractCountryNameFromTitle(article));
-        featuresVector.setC2(extractCapitalNameFromText(article));
-        featuresVector.setC3(extractContinentNameFromText(article));
-        featuresVector.setC4(isDollarInText(article));
-        featuresVector.setC5(countPoliticiansInText(article));
-        featuresVector.setC6(averageWordLength(article));
-        featuresVector.setC7(countWordsInText(article));
-        featuresVector.setC8(numberOfEventsInText(article));
-        featuresVector.setC9(numberOfUniqueWords(article));
-        featuresVector.setC10(mostFrequentWord(article));
+        featuresVector.setCountry(article.getCountry());
+        featuresVector.set(1, extractCountryNameFromTitle(article));
+        featuresVector.set(2, extractCapitalNameFromText(article));
+        featuresVector.set(3, extractContinentNameFromText(article));
+        featuresVector.set(4, isDollarInText(article));
+        featuresVector.set(5, countPoliticiansInText(article));
+        featuresVector.set(6, averageWordLength(article));
+        featuresVector.set(7, countWordsInText(article));
+        featuresVector.set(8, numberOfEventsInText(article));
+        featuresVector.set(9, numberOfUniqueWords(article));
+        featuresVector.set(10, mostFrequentWord(article));
         featuresVector.normalize();
         return featuresVector;
 
@@ -97,7 +100,7 @@ class FeaturesManager {
         return continent;
     }
 
-    private boolean isDollarInText(Article article) {
+    private Boolean isDollarInText(Article article) {
         List<String> text = article.getBody();
         String[] dollarSynonyms = {"dollar", "usd", "us dollar", "us dollars", "dollar's", "dollars", "dlr", "dlrs"};
         for (String s : dollarSynonyms)
@@ -106,7 +109,7 @@ class FeaturesManager {
         return false;
     }
 
-    private int countPoliticiansInText(Article article) {
+    private Double countPoliticiansInText(Article article) {
         List<String> text = article.getBody();
         String[] politicians = {"Ronald Reagan", "George Bush", "Tip O'Neill", "Robert Byrd", "Dan Quayle", "Michael Dukakis",
         "Helmut Kohl", "Hans-Dietrich Genscher", "Richard von Weizsäcker", "Theo Waigel", "Gerhard Stoltenberg", "Rita Sussmuth",
@@ -118,33 +121,33 @@ class FeaturesManager {
         for (String s : politicians)
             if (text.contains(s.toLowerCase()))
                 count++;
-        return count;
+        return (double) count;
     }
 
-    private float averageWordLength(Article article) {
+    private Double averageWordLength(Article article) {
         List<String> text = article.getBody();
         int sum = 0;
         for (String s : text)
             sum += s.length();
-        return (float) sum / text.size();
+        return (double) sum / text.size();
     }
 
-    private int countWordsInText(Article article) {
+    private Double countWordsInText(Article article) {
         List<String> text = article.getBody();
-        return text.size();
+        return (double) text.size();
     }
 
-    private int numberOfEventsInText(Article article) {
+    private Double numberOfEventsInText(Article article) {
         List<String> text = article.getBody();
         String[] events = {"Christmas", "Thanksgiving", "Independence Day", "New Year’s Day", "Memorial Day", "Labor Day", "Oktoberfest", "German Unity Day", "Carnival", "Easter", "Pentecost", "Golden Week", "Obon Festival", "Tanabata", "Hanami", "Shichi-Go-San", "Canada Day", "Victoria Day", "Remembrance Day", "Labour Day", "Thanksgiving", "Christmas", "Bastille Day", "Armistice Day", "Easter", "Christmas", "New Year’s Day", "Ascension Day", "Christmas", "New Year’s Day", "Remembrance Day", "Bonfire Night", "Easter", "Trooping the Colour"};
         int count = 0;
         for (String s : events)
             if (text.contains(s.toLowerCase()))
                 count++;
-        return count;
+        return (double) count;
     }
 
-    private int numberOfUniqueWords(Article article) {
+    private Double numberOfUniqueWords(Article article) {
         List<String> text = article.getBody();
         HashMap<String, Integer> uniqueWords = new HashMap<>();
         for (String s : text) {
@@ -153,7 +156,7 @@ class FeaturesManager {
             else
                 uniqueWords.put(s, 1);
         }
-        return uniqueWords.size();
+        return (double) uniqueWords.size();
     }
 
     private String mostFrequentWord(Article article) {

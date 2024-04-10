@@ -65,7 +65,7 @@ class ArticleManager {
                 }
 
                 String[] d = placesText.split("<D>");
-                if(d.length > 2 || d.length == 1) {
+                if(d.length != 2) {
                     continue;
                 }
                 String place = d[1].split("</D>")[0];
@@ -84,6 +84,7 @@ class ArticleManager {
 
                 articles.add(new Article(country, title, body));
             }
+            System.out.println("Articles loaded: " + rawArticles.length);
         }
     }
 

@@ -1,6 +1,8 @@
 package org.example.modules.featureExtraction;
 
 import org.example.modules.featureExtraction.exceptions.ArticleManagerException;
+import org.example.modules.featureExtraction.exceptions.FeatureExtractionModuleException;
+import org.example.modules.featureExtraction.exceptions.FeaturesVectorException;
 import org.example.modules.featureExtraction.exceptions.StopWordsManagerException;
 
 import java.util.ArrayList;
@@ -22,9 +24,16 @@ public class FeatureExtractionModule {
         articleManager.loadFromFiles(path);
     }
 
-    public List<FeaturesVector> getExtractedFeatures() {
-        List<FeaturesVector> featuresVector = new ArrayList<>();
-        ArticleManager.getInstance().getArticles().forEach(article -> featuresVector.add(FeaturesManager.getInstance().extractFeatures(article)));
-        return featuresVector;
+    public List<FeaturesVector> getExtractedFeatures() throws FeatureExtractionModuleException {
+        List<FeaturesVector> featuresVectorList = new ArrayList<>();
+        List<Article> articles = ArticleManager.getInstance().getArticles();
+        for (Article article : articles) {
+            try {
+                featuresVectorList.add(FeaturesManager.getInstance().extractFeatures(article));
+            } catch (FeaturesVectorException e) {
+                throw new FeatureExtractionModuleException("Error while extracting features", e);
+            }
+        }
+        return featuresVectorList;
     }
 }
