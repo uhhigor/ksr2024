@@ -2,12 +2,10 @@ package org.example.modules.classifier;
 
 import org.example.modules.classifier.exceptions.MetricException;
 import org.example.modules.classifier.metric.Metric;
+import org.example.modules.classifier.quality.ClassificationQuality;
 import org.example.modules.featureExtraction.FeaturesVector;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ClassifierModule {
     private final int k;
@@ -40,6 +38,9 @@ public class ClassifierModule {
         List<FeaturesVector> trainVectors = featuresVectors.subList(0, trainSize);
         List<FeaturesVector> testVectors = featuresVectors.subList(trainSize, trainSize + testSize);
 
+        List<String> predicted = new ArrayList<>();
+        List<String> real = new ArrayList<>();
+
         List<VectorDistance> distances = new ArrayList<>();
         for(FeaturesVector testVector : testVectors) {
             for(FeaturesVector trainVector : trainVectors) {
@@ -61,11 +62,23 @@ public class ClassifierModule {
                 if(votes.get(country) > maxVotes) {
                     maxVotes = votes.get(country);
                     predictedCountry = country;
+                    predicted.add(predictedCountry);
                 }
             }
-            System.out.print(votes + " ");
-            System.out.println("Predicted: " + predictedCountry + " Real: " + testVector.getCountry());
+            real.add(testVector.getCountry());
+
+
+//            System.out.print(votes + " ");
+//            System.out.println("Predicted: " + predictedCountry + " Real: " + testVector.getCountry());
         }
+
+        System.out.println(predicted.size());
+        System.out.println(real.size());
+        ClassificationQuality quality = new ClassificationQuality(predicted, real);
+        System.out.println("Accuracy: " + quality.calculateAccuracy());
+        System.out.println("Precision: " + Arrays.toString(quality.calculateCountryPrecision()));
+        System.out.println("Recall: " + Arrays.toString(quality.calculateCountryRecall()));
+        System.out.println("F1: " + Arrays.toString(quality.calculateCountryF1Score()));
     }
 
 
