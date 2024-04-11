@@ -5,4 +5,5 @@ module project1 {
     exports org.example.modules.classifier.metric;
     exports org.example.modules.featureExtraction;
     exports org.example.modules.featureExtraction.exceptions;
+    exports org.example.modules.classifier.quality;
 }

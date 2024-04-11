@@ -2,7 +2,6 @@ package org.example.modules.classifier;
 
 import org.example.modules.classifier.exceptions.MetricException;
 import org.example.modules.classifier.metric.Metric;
-import org.example.modules.classifier.quality.ClassificationQuality;
 import org.example.modules.featureExtraction.FeaturesVector;
 
 import java.util.*;
@@ -12,10 +11,10 @@ public class ClassifierModule {
     private final List<FeaturesVector> featuresVectors;
     private final int[] featuresToUse;
     private final Metric metric;
-
     private final int trainSizePercent;
-
     private final int testSizePercent;
+    private final List<String> predicted = new ArrayList<>();
+    private final List<String> real = new ArrayList<>();
 
     public ClassifierModule(int k, List<FeaturesVector> featuresVectors, int[] featuresToUse, Metric metric, int trainSizePercent, int testSizePercent) {
         this.k = k;
@@ -29,6 +28,14 @@ public class ClassifierModule {
         }
     }
 
+    public List<String> getPredicted() {
+        return predicted;
+    }
+
+    public List<String> getReal() {
+        return real;
+    }
+
     public record VectorDistance(FeaturesVector vector, double distance){}
 
     public void classify() throws MetricException {
@@ -37,9 +44,6 @@ public class ClassifierModule {
 
         List<FeaturesVector> trainVectors = featuresVectors.subList(0, trainSize);
         List<FeaturesVector> testVectors = featuresVectors.subList(trainSize, trainSize + testSize);
-
-        List<String> predicted = new ArrayList<>();
-        List<String> real = new ArrayList<>();
 
         List<VectorDistance> distances = new ArrayList<>();
         for(FeaturesVector testVector : testVectors) {
@@ -57,7 +61,7 @@ public class ClassifierModule {
                 }
             }
             int maxVotes = 0;
-            String predictedCountry = null;
+            String predictedCountry;
             for(String country : votes.keySet()) {
                 if(votes.get(country) > maxVotes) {
                     maxVotes = votes.get(country);
@@ -71,18 +75,5 @@ public class ClassifierModule {
 //            System.out.print(votes + " ");
 //            System.out.println("Predicted: " + predictedCountry + " Real: " + testVector.getCountry());
         }
-
-        System.out.println(predicted.size());
-        System.out.println(real.size());
-        ClassificationQuality quality = new ClassificationQuality(predicted, real);
-        System.out.println("Accuracy: " + quality.calculateAccuracy());
-        System.out.println("Precision: " + Arrays.toString(quality.calculateCountryPrecision()));
-        System.out.println("Recall: " + Arrays.toString(quality.calculateCountryRecall()));
-        System.out.println("F1: " + Arrays.toString(quality.calculateCountryF1Score()));
-        System.out.println("Precision average: " + quality.calculateWeightedAveragePrecision());
-        System.out.println("Recall average: " + quality.calculateWeightedAverageRecall());
-        System.out.println("F1 average: " + quality.calculateWeightedAverageF1Score());
     }
-
-
 }

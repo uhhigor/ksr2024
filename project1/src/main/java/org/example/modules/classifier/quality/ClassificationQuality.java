@@ -55,7 +55,7 @@ public class ClassificationQuality {
             tp += tpMap.get(label);
         }
 
-        return (double) tp / populationSize;
+        return Math.round ((double) tp / populationSize * 100.0) / 100.0;
     }
 
     public double [] calculateCountryPrecision() {
@@ -76,7 +76,7 @@ public class ClassificationQuality {
                     qualitySum += qualityMap.get(qualityMap.keySet().toArray()[j].toString());
                 }
             }
-            quality[i] = (double) tpMap.get(label) / (tpMap.get(label) + qualitySum);
+            quality[i] = Math.round((double) tpMap.get(label) / (tpMap.get(label) + qualitySum) * 100.0) / 100.0;
         }
         return quality;
     }
@@ -86,7 +86,7 @@ public class ClassificationQuality {
         double [] precision = calculateCountryPrecision();
         double [] recall = calculateCountryRecall();
         for (int i = 0; i < 6; i++) {
-            f1Score[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]);
+            f1Score[i] = Math.round((2 * precision[i] * recall[i] / (precision[i] + recall[i])) * 100.0) / 100.0;
         }
         return f1Score;
     }
@@ -115,6 +115,6 @@ public class ClassificationQuality {
         for (int i = 0; i < 6; i++) {
             weightedAveragePrecision += quality[i] * real[i];
         }
-        return weightedAveragePrecision / populationSize;
+        return Math.round(weightedAveragePrecision / populationSize * 100.0) / 100.0;
     }
 }
