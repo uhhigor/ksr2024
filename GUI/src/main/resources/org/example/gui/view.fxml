@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="561.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.gui.Controller">
+  <children>
+    <TextField fx:id="kParameter" layoutX="51.0" layoutY="26.0" promptText="Enter k parameter" />
+    <TextField fx:id="trainParameter" layoutX="51.0" layoutY="52.0" promptText="Enter train size percent" />
+    <TextField fx:id="testParameter" layoutX="51.0" layoutY="78.0" promptText="Enter test size percent" />
+    <TextField fx:id="endParameter" layoutX="51.0" layoutY="132.0" promptText="Enter end value" />
+    <ChoiceBox fx:id="metricChoiceBox" layoutX="51.0" layoutY="158.0" prefWidth="150.0" />
+    <TextField fx:id="initialParameter" layoutX="51.0" layoutY="104.0" promptText="Enter initial value" />
+    <CheckBox fx:id="feature1" layoutX="429.0" layoutY="39.0" mnemonicParsing="false" text="Feature 1" />
+    <CheckBox fx:id="feature2" layoutX="429.0" layoutY="65.0" mnemonicParsing="false" text="Feature 2" />
+    <CheckBox fx:id="feature3" layoutX="429.0" layoutY="91.0" mnemonicParsing="false" text="Feature 3" />
+    <CheckBox fx:id="feature4" layoutX="429.0" layoutY="119.0" mnemonicParsing="false" text="Feature 4" />
+    <CheckBox fx:id="feature5" layoutX="429.0" layoutY="145.0" mnemonicParsing="false" text="Feature 5" />
+    <CheckBox fx:id="feature6" layoutX="429.0" layoutY="171.0" mnemonicParsing="false" text="Feature 6" />
+    <CheckBox fx:id="feature7" layoutX="429.0" layoutY="197.0" mnemonicParsing="false" text="Feature 7" />
+    <CheckBox fx:id="feature8" layoutX="429.0" layoutY="223.0" mnemonicParsing="false" text="Feature 8" />
+    <CheckBox fx:id="feature9" layoutX="429.0" layoutY="249.0" mnemonicParsing="false" text="Feature 9" />
+    <CheckBox fx:id="feature10" layoutX="429.0" layoutY="275.0" mnemonicParsing="false" text="Feature 10" />
+    <Label layoutX="28.0" layoutY="30.0" />
+    <Button fx:id="btnClassify" layoutX="100.0" layoutY="211.0" mnemonicParsing="false" text="Classify" />
+  </children>
+</AnchorPane>
