@@ -4,9 +4,10 @@ public class StringDistance {
     private static double trigramSimilarity(String s1, String s2) {
         int s1Length = s1.length();
         int s2Length = s2.length();
-        if (s1Length == 0 || s2Length == 0) {
-            return 0;
+        if(s1.equals(s2)) {
+            return 1;
         }
+
         int maxLength = Math.max(s1Length, s2Length);
         int numberOfTrigrams = maxLength - 2;
 

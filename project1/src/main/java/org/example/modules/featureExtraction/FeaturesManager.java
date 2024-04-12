@@ -2,6 +2,7 @@ package org.example.modules.featureExtraction;
 
 import org.example.modules.featureExtraction.exceptions.FeaturesVectorException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,9 +22,9 @@ class FeaturesManager {
     public FeaturesVector extractFeatures(Article article) throws FeaturesVectorException {
         FeaturesVector featuresVector = new FeaturesVector();
         featuresVector.setCountry(article.getCountry());
-        featuresVector.set(1, extractCountryNameFromTitle(article));
-        featuresVector.set(2, extractCapitalNameFromText(article));
-        featuresVector.set(3, extractContinentNameFromText(article));
+        featuresVector.set(1, extractCountryName(article));
+        featuresVector.set(2, extractCity(article));
+        featuresVector.set(3, extractContinentName(article));
         featuresVector.set(4, isDollarInText(article));
         featuresVector.set(5, countPoliticiansInText(article));
         featuresVector.set(6, averageWordLength(article));
@@ -36,61 +37,84 @@ class FeaturesManager {
 
     }
 
-    private String extractCountryNameFromTitle(Article article) {
+    private String extractCountryName(Article article) {
         String[] westgermany = {"west-germany", "west-german", "german", "germany"};
         String[] usa = {"usa", "us", "america", "american"};
         String[] france = {"france", "french"};
         String[] uk = {"uk", "united", "kingdom", "britain", "british", "great", "england"};
         String[] canada = {"canada", "canadian"};
         String[] japan = {"japan", "japanese"};
-        List<String> title = article.getTitle();
-        for (String s : title)
-        {
+        String s = article.getAllText();
             for (String country : westgermany)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "west-germany";
             for (String country : usa)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "usa";
             for (String country : france)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "france";
             for (String country : uk)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "uk";
             for (String country : canada)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "canada";
             for (String country : japan)
-                if (s.equals(country))
+                if (s.contains(country))
                     return "japan";
-        }
-        return null;
+        return "";
     }
 
-    private String extractCapitalNameFromText(Article article) {
-        List<String> text = article.getBody();
-        for (String s : text)
-            if(s.equals("bonn") || s.equals("washington")
-                    || s.equals("paris") || s.equals("london")
-                    || s.equals("ottawa") || s.equals("tokyo"))
-                return s;
-        return null;
+    private String extractCapitalName(Article article) {
+        String text = article.getAllText();
+            if(text.contains("bonn") || text.contains("washington")
+                    || text.contains("paris") || text.contains("london")
+                    || text.contains("ottawa") || text.contains("tokyo")
+                    || text.contains("berlin"))
+                return text;
+        return "";
     }
 
-    private String extractContinentNameFromText(Article article) {
+    private String extractCity(Article article) {
+        String text = article.getAllText();
+        List<String> cities = List.of("bonn", "washington", "paris", "london", "ottawa", "tokyo", "berlin");
+        List<String> german_cities = List.of("bonn", "berlin", "dortmund", "essen", "frankfurt", "hamburg", "hannover", "köln", "leipzig", "münchen", "nürnberg", "stuttgart");
+        List<String> usa_cities = List.of("washington", "new york", "los angeles", "chicago", "houston", "phoenix", "philadelphia");
+        List<String> france_cities = List.of("paris", "marseille", "lyon", "toulouse", "nice", "nantes", "strasbourg", "montpellier", "bordeaux", "lille");
+        List<String> uk_cities = List.of("london", "birmingham", "manchester", "glasgow", "newcastle", "sheffield", "liverpool", "leeds", "bristol", "nottingham");
+        List<String> canada_cities = List.of("ottawa", "toronto", "montreal", "vancouver", "calgary", "edmonton", "quebec", "winnipeg", "hamilton", "london");
+        List<String> japan_cities = List.of("tokyo", "yokohama", "osaka", "nagoya", "sapporo", "fukuoka", "kobe", "kyoto", "kawasaki", "saitama");
+
+        List<String> all = new ArrayList<>();
+        all.addAll(cities);
+        all.addAll(german_cities);
+        all.addAll(usa_cities);
+        all.addAll(france_cities);
+        all.addAll(uk_cities);
+        all.addAll(canada_cities);
+        all.addAll(japan_cities);
+
+            for (String city : all)
+                if(text.contains(city))
+                    return city;
+        return "";
+    }
+
+    private String extractContinentName(Article article) {
         HashMap<String, Integer> continents = new HashMap<>();
         continents.put("europe", 0);
         continents.put("america", 0);
         continents.put("asia", 0);
-        List<String> text = article.getBody();
-        for (String s : text) {
-            if (continents.containsKey(s))
-                continents.put(s, continents.get(s) + 1);
+        String text = article.getAllText();
+            for(String continent : continents.keySet())
+            {
+                if(text.contains(continent))
+                    continents.put(continent, continents.get(continent) + 1);
         }
 
         int max = 0;
-        String continent = null;
+        String continent = "";
         for (String s : continents.keySet()) {
             if (continents.get(s) > max) {
                 max = continents.get(s);
@@ -101,7 +125,7 @@ class FeaturesManager {
     }
 
     private Boolean isDollarInText(Article article) {
-        List<String> text = article.getBody();
+        String text = article.getBody();
         String[] dollarSynonyms = {"dollar", "usd", "dollars", "dlr", "dlrs"};
         for (String s : dollarSynonyms) {
             if (text.contains(s))
@@ -111,54 +135,49 @@ class FeaturesManager {
     }
 
     private Double countPoliticiansInText(Article article) {
-        List<String> text = article.getBody();
-        String[] politicians = {"Ronald Reagan", "George Bush", "Tip O'Neill", "Robert Byrd", "Dan Quayle", "Michael Dukakis",
-        "Helmut Kohl", "Hans-Dietrich Genscher", "Richard von Weizsäcker", "Theo Waigel", "Gerhard Stoltenberg", "Rita Sussmuth",
-        "Yasuhiro Nakasone", "Noboru Takeshita", "Sosuke Uno", "Kiichi Miyazawa", "Shintaro Abe", "Hajime Tamura",
-        "Brian Mulroney", "John Turner", "Jean Chrétien", "Donald Johnston", "Michael Wilson", "Flora MacDonald",
-        "Jacques Chirac", "François Mitterrand", "Jacques Delors", "Édouard Balladur", "Alain Juppé", "Pierre Bérégovoy",
-                "Margaret Thatcher", "Neil Kinnock", "John Major", "Michael Heseltine", "Douglas Hurd", "Nigel Lawson"};
+        String text = article.getBody();
+        String[] politicians = {"reagan", "bush", "neill", "byrd", "quayle", "dukakis",
+        "kohl", "genscher", "weizsäcker", "waigel", "stoltenberg", "sussmuth",
+        "nakasone", "takeshita", "uno", "miyazawa", "abe", "tamura",
+        "mulroney", "turner", "chrétien", "johnston", "wilson", "macdonald",
+        "chirac", "mitterrand", "delors", "balladur", "juppé", "bérégovoy",
+                "thatcher", "kinnock", "major", "heseltine", "hurd", "lawson"};
         int count = 0;
         for (String s : politicians) {
-            String[] tokens = s.toLowerCase().split(" ");
-            for (String token : tokens)
-                if (text.contains(token))
-                    count++;
+            if (text.contains(s))
+                count++;
         }
         return (double) count;
     }
 
     private Double averageWordLength(Article article) {
-        List<String> text = article.getBody();
+        String text = article.getBody();
         int sum = 0;
-        for (String s : text)
+        for (String s : text.split(" "))
             sum += s.length();
-        return (double) sum / text.size();
+        return (double) sum / text.split(" ").length;
     }
 
     private Double countWordsInText(Article article) {
-        List<String> text = article.getBody();
-        return (double) text.size();
+        String text = article.getBody();
+        return (double) text.split(" ").length;
     }
 
     private Double numberOfEventsInText(Article article) {
-        List<String> text = article.getBody();
-        String[] events = {"Christmas", "Thanksgiving", "Independence Day", "New Year’s Day", "Memorial Day", "Labor Day", "Oktoberfest", "German Unity Day", "Carnival", "Easter", "Pentecost", "Golden Week", "Obon Festival", "Tanabata", "Hanami", "Shichi-Go-San", "Canada Day", "Victoria Day", "Remembrance Day", "Labour Day", "Thanksgiving", "Christmas", "Bastille Day", "Armistice Day", "Easter", "Christmas", "New Year’s Day", "Ascension Day", "Christmas", "New Year’s Day", "Remembrance Day", "Bonfire Night", "Easter", "Trooping the Colour"};
+        String text = article.getBody();
+        String[] events = {"christmas", "thanksgiving", "independence", "memorial", "labor", "oktoberfest", "unity", "carnival", "easter", "pentecost", "golden", "obon", "tanabata", "hanami", "shichi-go-san", "canada", "victoria", "remembrance", "labour", "thanksgiving", "christmas", "bastille", "armistice", "ascension", "bonfire"};
         int count = 0;
         for (String s : events) {
-            String[] tokens = s.toLowerCase().split(" ");
-            for (String token : tokens) {
-                if (text.contains(token))
+                if (text.contains(s))
                     count++;
-            }
         }
         return (double) count;
     }
 
     private Double numberOfUniqueWords(Article article) {
-        List<String> text = article.getBody();
+        String text = article.getBody();
         HashMap<String, Integer> uniqueWords = new HashMap<>();
-        for (String s : text) {
+        for (String s : text.split(" ")) {
             if (uniqueWords.containsKey(s))
                 uniqueWords.put(s, uniqueWords.get(s) + 1);
             else
@@ -168,9 +187,9 @@ class FeaturesManager {
     }
 
     private String mostFrequentWord(Article article) {
-        List<String> text = article.getBody();
+        String text = article.getBody();
         HashMap<String, Integer> wordCount = new HashMap<>();
-        for (String s : text) {
+        for (String s : text.split(" ")) {
             if (wordCount.containsKey(s))
                 wordCount.put(s, wordCount.get(s) + 1);
             else

@@ -76,11 +76,8 @@ class ArticleManager {
                     continue;
                 }
 
-                List<String> title = NLPUtils.getInstance().tokenize(titleText);
-                List<String> body = NLPUtils.getInstance().tokenize(bodyText);
-
-                title = NLPUtils.getInstance().removeStopWords(title);
-                body = NLPUtils.getInstance().removeStopWords(body);
+                String title = NLPUtils.getInstance().preProcessText(titleText);
+                String body = NLPUtils.getInstance().preProcessText(bodyText);
 
                 articles.add(new Article(country, title, body));
             }

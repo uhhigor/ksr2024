@@ -11,9 +11,6 @@ public class ManhattanMetric implements Metric {
         for (int featureNumber : featuresToUse) {
             Object featureValue1 = vector1.get(featureNumber);
             Object featureValue2 = vector2.get(featureNumber);
-            if(featureValue1 == null || featureValue2 == null) {
-                continue;
-            }
             switch (featureValue1) {
                 case Double value1 when featureValue2 instanceof Double value2 -> sum += Math.abs(value1 - value2);
                 case Boolean value1 when featureValue2 instanceof Boolean value2 -> {

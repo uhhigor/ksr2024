@@ -2,6 +2,7 @@ package org.example.modules.classifier.quality;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClassificationQuality {
 
@@ -58,62 +59,64 @@ public class ClassificationQuality {
         return Math.round ((double) tp / populationSize * 100.0) / 100.0;
     }
 
-    public double [] calculateCountryPrecision() {
+    public Map<String, Double> calculateCountryPrecision() {
         return calculateQuality(fpMap);
     }
 
-    public double [] calculateCountryRecall() {
+    public Map<String, Double> calculateCountryRecall() {
         return calculateQuality(fnMap);
     }
 
-    private double[] calculateQuality(HashMap<String, Integer> qualityMap) {
-        double [] quality = new double[6];
-        for (int i = 0; i < 6; i++) {
+    private Map<String, Double> calculateQuality(HashMap<String, Integer> qualityMap) {
+        Map<String, Double> quality = new HashMap<>();
+        int qualitySum = 0;
+        for(int i = 0; i < 6; i++) {
+            qualitySum += qualityMap.get(qualityMap.keySet().toArray()[i].toString());
+        }
+        for(int i = 0; i < 6; i++) {
+
             String label = tpMap.keySet().toArray()[i].toString();
-            int qualitySum = 0;
-            for (int j = 0; j < 6; j++) {
-                if (i != j) {
-                    qualitySum += qualityMap.get(qualityMap.keySet().toArray()[j].toString());
-                }
-            }
-            quality[i] = Math.round((double) tpMap.get(label) / (tpMap.get(label) + qualitySum) * 100.0) / 100.0;
+            double currentSum = qualitySum - qualityMap.get(label);
+            quality.put(label, Math.round((double) tpMap.get(label) / ((tpMap.get(label) + currentSum)) * 100.0) / 100.0);
         }
         return quality;
     }
 
-    public double[] calculateCountryF1Score() {
-        double [] f1Score = new double[6];
-        double [] precision = calculateCountryPrecision();
-        double [] recall = calculateCountryRecall();
-        for (int i = 0; i < 6; i++) {
-            f1Score[i] = Math.round((2 * precision[i] * recall[i] / (precision[i] + recall[i])) * 100.0) / 100.0;
+    public Map<String, Double> calculateCountryF1Score() {
+        Map<String, Double> f1Score = new HashMap<>();
+        Map<String, Double> precision = calculateCountryPrecision();
+        Map<String, Double> recall = calculateCountryRecall();
+
+        for(String label : precision.keySet()) {
+            f1Score.put(label, Math.round((2 * precision.get(label) * recall.get(label) / (precision.get(label) + recall.get(label))) * 100.0) / 100.0);
         }
         return f1Score;
     }
 
     public double calculateWeightedAveragePrecision() {
-        double [] precision = calculateCountryPrecision();
+        Map<String, Double> precision = calculateCountryPrecision();
         return calculateQualityAverage(precision);
     }
 
     public double calculateWeightedAverageRecall() {
-        double [] recall = calculateCountryRecall();
+        Map<String, Double> recall = calculateCountryRecall();
         return calculateQualityAverage(recall);
     }
 
     public double calculateWeightedAverageF1Score() {
-        double [] f1Score = calculateCountryF1Score();
+        Map<String, Double> f1Score = calculateCountryF1Score();
         return calculateQualityAverage(f1Score);
     }
 
-    private double calculateQualityAverage(double[] quality) {
-        double [] real = new double[6];
-        for (int i = 0; i < 6; i++) {
-            real[i] = (double) realMap.get(realMap.keySet().toArray()[i].toString());
+    private double calculateQualityAverage(Map<String, Double> quality) {
+        Map<String, Double> real = new HashMap<>();
+        for(String label : realMap.keySet()) {
+            real.put(label, (double) realMap.get(label));
         }
+
         double weightedAveragePrecision = 0;
-        for (int i = 0; i < 6; i++) {
-            weightedAveragePrecision += quality[i] * real[i];
+        for(String label : quality.keySet()) {
+            weightedAveragePrecision += quality.get(label) * real.get(label);
         }
         return Math.round(weightedAveragePrecision / populationSize * 100.0) / 100.0;
     }

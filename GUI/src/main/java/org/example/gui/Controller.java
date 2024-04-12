@@ -4,17 +4,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import org.example.modules.classifier.ClassifierModule;
 import org.example.modules.classifier.exceptions.MetricException;
 import org.example.modules.classifier.metric.EuklidesMetric;
 import org.example.modules.classifier.metric.ManhattanMetric;
 import org.example.modules.classifier.metric.ChebyshevMetric;
 import org.example.modules.featureExtraction.FeatureExtractionModule;
+import org.example.modules.featureExtraction.FeaturesVector;
+import org.example.modules.featureExtraction.exceptions.ArticleManagerException;
 import org.example.modules.featureExtraction.exceptions.FeatureExtractionModuleException;
 import org.example.modules.classifier.quality.ClassificationQuality;
+import org.example.modules.featureExtraction.exceptions.StopWordsManagerException;
 
 
 public class Controller implements Initializable {
@@ -54,6 +56,7 @@ public class Controller implements Initializable {
 
     private final String[] metrics = {"Euclides", "Manhattan", "Chebyshev"};
 
+    private FeatureExtractionModule featureExtractionModule;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -78,22 +81,40 @@ public class Controller implements Initializable {
         feature10.setSelected(true);
 
         btnClassify.setOnAction(event -> onClassifyButton());
+
+        final String STOP_WORDS_PATH = Objects.requireNonNull(Controller.class.getResource
+                ("/stopWords.txt")).getPath();
+        final String ARTICLES_PATH = Objects.requireNonNull(Application.class.getResource
+                ("/reuters21578")).getPath();
+        try {
+            featureExtractionModule = new FeatureExtractionModule(STOP_WORDS_PATH, ARTICLES_PATH);
+        } catch (StopWordsManagerException | ArticleManagerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void onClassifyButton() {
         try {
-            final String STOP_WORDS_PATH = Objects.requireNonNull(Controller.class.getResource
-                    ("/stopWords.txt")).getPath().substring(1);
-            final String ARTICLES_PATH = Objects.requireNonNull(Controller.class.getResource
-                    ("/reuters21578")).getPath().substring(1);
-            FeatureExtractionModule featureExtractionModule = new FeatureExtractionModule(STOP_WORDS_PATH, ARTICLES_PATH);
+
+            ArrayList<Integer> featuresToUse = new ArrayList<>();
+            if(feature1.isSelected()) featuresToUse.add(1);
+            if(feature2.isSelected()) featuresToUse.add(2);
+            if(feature3.isSelected()) featuresToUse.add(3);
+            if(feature4.isSelected()) featuresToUse.add(4);
+            if(feature5.isSelected()) featuresToUse.add(5);
+            if(feature6.isSelected()) featuresToUse.add(6);
+            if(feature7.isSelected()) featuresToUse.add(7);
+            if(feature8.isSelected()) featuresToUse.add(8);
+            if(feature9.isSelected()) featuresToUse.add(9);
+            if(feature10.isSelected()) featuresToUse.add(10);
+            List<FeaturesVector> features = featureExtractionModule.getExtractedFeatures().subList(Integer.parseInt(initialParameter.getText()),
+                    Integer.parseInt(endParameter.getText()));
+
+            int[] featuresToUseArray = featuresToUse.stream().mapToInt(i -> i).toArray();
+
             ClassifierModule classifierModule = new ClassifierModule(Integer.parseInt(kParameter.getText()),
-                    featureExtractionModule.getExtractedFeatures().subList(Integer.parseInt(initialParameter.getText()),
-                            Integer.parseInt(endParameter.getText())),
-                    new int[]{feature1.isSelected() ? 1 : 0, feature2.isSelected() ? 2 : 0, feature3.isSelected() ? 3 : 0,
-                            feature4.isSelected() ? 4 : 0, feature5.isSelected() ? 5 : 0, feature6.isSelected() ? 6 : 0,
-                            feature7.isSelected() ? 7 : 0, feature8.isSelected() ? 8 : 0, feature9.isSelected() ? 9 : 0,
-                            feature10.isSelected() ? 10 : 0},
+                    features,
+                    featuresToUseArray,
                     switch (metricChoiceBox.getValue()) {
                         case "Euclides" -> new EuklidesMetric();
                         case "Manhattan" -> new ManhattanMetric();
@@ -114,34 +135,34 @@ public class Controller implements Initializable {
     {
         ClassificationQuality classificationQuality = new ClassificationQuality(predicted, real);
         double accuracy = classificationQuality.calculateAccuracy();
-        double[] precision = classificationQuality.calculateCountryPrecision();
-        double[] recall = classificationQuality.calculateCountryRecall();
-        double[] f1 = classificationQuality.calculateCountryF1Score();
+        Map<String, Double> precision = classificationQuality.calculateCountryPrecision();
+        Map<String, Double> recall = classificationQuality.calculateCountryRecall();
+        Map<String, Double> f1 = classificationQuality.calculateCountryF1Score();
 
         accuracyLabel.setText(String.valueOf(accuracy));
-        usaPrecisionLabel.setText(String.valueOf(precision[0]));
-        usaRecallLabel.setText(String.valueOf(recall[0]));
-        usaF1Label.setText(String.valueOf(f1[0]));
+        usaPrecisionLabel.setText(String.valueOf(precision.get("usa")));
+        usaRecallLabel.setText(String.valueOf(recall.get("usa")));
+        usaF1Label.setText(String.valueOf(f1.get("usa")));
 
-        ukPrecisionLabel.setText(String.valueOf(precision[1]));
-        ukRecallLabel.setText(String.valueOf(recall[1]));
-        ukF1Label.setText(String.valueOf(f1[1]));
+        ukPrecisionLabel.setText(String.valueOf(precision.get("uk")));
+        ukRecallLabel.setText(String.valueOf(recall.get("uk")));
+        ukF1Label.setText(String.valueOf(f1.get("uk")));
 
-        germanyPrecisionLabel.setText(String.valueOf(precision[2]));
-        germanyRecallLabel.setText(String.valueOf(recall[2]));
-        germanyF1Label.setText(String.valueOf(f1[2]));
+        germanyPrecisionLabel.setText(String.valueOf(precision.get("west-germany")));
+        germanyRecallLabel.setText(String.valueOf(recall.get("west-germany")));
+        germanyF1Label.setText(String.valueOf(f1.get("west-germany")));
 
-        canadaPrecisionLabel.setText(String.valueOf(precision[3]));
-        canadaRecallLabel.setText(String.valueOf(recall[3]));
-        canadaF1Label.setText(String.valueOf(f1[3]));
+        canadaPrecisionLabel.setText(String.valueOf(precision.get("canada")));
+        canadaRecallLabel.setText(String.valueOf(recall.get("canada")));
+        canadaF1Label.setText(String.valueOf(f1.get("canada")));
 
-        japanPrecisionLabel.setText(String.valueOf(precision[4]));
-        japanRecallLabel.setText(String.valueOf(recall[4]));
-        japanF1Label.setText(String.valueOf(f1[4]));
+        japanPrecisionLabel.setText(String.valueOf(precision.get("japan")));
+        japanRecallLabel.setText(String.valueOf(recall.get("japan")));
+        japanF1Label.setText(String.valueOf(f1.get("japan")));
 
-        francePrecisionLabel.setText(String.valueOf(precision[5]));
-        franceRecallLabel.setText(String.valueOf(recall[5]));
-        franceF1Label.setText(String.valueOf(f1[5]));
+        francePrecisionLabel.setText(String.valueOf(precision.get("france")));
+        franceRecallLabel.setText(String.valueOf(recall.get("france")));
+        franceF1Label.setText(String.valueOf(f1.get("france")));
 
         averagePrecisionLabel.setText(String.valueOf(classificationQuality.calculateWeightedAveragePrecision()));
         averageRecallLabel.setText(String.valueOf(classificationQuality.calculateWeightedAverageRecall()));

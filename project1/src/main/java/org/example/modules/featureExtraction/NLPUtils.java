@@ -31,13 +31,20 @@ class NLPUtils {
     }
 
     public List<String> tokenize(String text) {
-        text = text.toLowerCase().replaceAll("[^a-zA-Z0-9]", " ");
         return new ArrayList<>(List.of(text.split("\\s+")));
     }
 
     public List<String> removeStopWords(List<String> tokens) {
         tokens.removeAll(stopWords);
         return tokens;
+    }
+
+    public String preProcessText(String text) {
+        text = text.toLowerCase();
+        List<String> tokenized = tokenize(text);
+        tokenized = removeStopWords(tokenized);
+        text = String.join(" ", tokenized);
+        return text;
     }
 
 }

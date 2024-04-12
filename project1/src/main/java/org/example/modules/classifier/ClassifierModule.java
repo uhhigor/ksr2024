@@ -45,12 +45,17 @@ public class ClassifierModule {
         List<FeaturesVector> trainVectors = featuresVectors.subList(0, trainSize);
         List<FeaturesVector> testVectors = featuresVectors.subList(trainSize, trainSize + testSize);
 
-        List<VectorDistance> distances = new ArrayList<>();
         for(FeaturesVector testVector : testVectors) {
+            List<VectorDistance> distances = new ArrayList<>();
             for(FeaturesVector trainVector : trainVectors) {
-                distances.add(new VectorDistance(trainVector, metric.calculateDistance(testVector, trainVector, featuresToUse)));
+                double distance = metric.calculateDistance(testVector, trainVector, featuresToUse);
+                distances.add(new VectorDistance(trainVector, distance));
             }
             distances.sort(Comparator.comparingDouble(VectorDistance::distance));
+            for(VectorDistance distance : distances) {
+                System.out.print(distance.vector.getCountry() + " " + distance.distance() + ", ");
+            }
+            System.out.println();
             HashMap<String, Integer> votes = new HashMap<>();
             for(int i = 0; i < k; i++) {
                 String country = distances.get(i).vector.getCountry();
@@ -67,13 +72,9 @@ public class ClassifierModule {
                     maxVotes = votes.get(country);
                     predictedCountry = country;
                     predicted.add(predictedCountry);
+                    real.add(testVector.getCountry());
                 }
             }
-            real.add(testVector.getCountry());
-
-
-//            System.out.print(votes + " ");
-//            System.out.println("Predicted: " + predictedCountry + " Real: " + testVector.getCountry());
         }
     }
 }

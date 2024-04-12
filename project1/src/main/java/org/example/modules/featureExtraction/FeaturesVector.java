@@ -65,7 +65,7 @@ public class FeaturesVector {
     }
 
     public void set(int i, Object value) throws FeaturesVectorException {
-        if(value instanceof Double || value instanceof Boolean || value instanceof String || value == null) {
+        if(value instanceof Double || value instanceof Boolean || value instanceof String) {
             features[i - 1] = value;
         } else {
             throw new FeaturesVectorException("Unsupported feature type: " + value.getClass().getSimpleName());

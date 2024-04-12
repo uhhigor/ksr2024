@@ -5,33 +5,37 @@ import java.util.List;
 public class Article {
 
     private final String country;
-    private List<String> title;
-    private List<String> body;
+    private String title;
+    private String body;
 
-    public Article(String country, List<String> title, List<String> content) {
+    public Article(String country, String title, String body) {
         this.country = country;
         this.title = title;
-        this.body = content;
+        this.body = body;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public List<String> getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public List<String> getBody() {
+    public String getBody() {
         return body;
     }
 
-    public void setTitle(List<String> title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setBody(List<String> body) {
+    public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getAllText() {
+        return title + body;
     }
 
     public String toString() {
