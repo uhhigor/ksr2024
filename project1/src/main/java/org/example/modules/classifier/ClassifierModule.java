@@ -66,15 +66,15 @@ public class ClassifierModule {
                 }
             }
             int maxVotes = 0;
-            String predictedCountry;
+            String predictedCountry = "";
             for(String country : votes.keySet()) {
                 if(votes.get(country) > maxVotes) {
                     maxVotes = votes.get(country);
                     predictedCountry = country;
-                    predicted.add(predictedCountry);
-                    real.add(testVector.getCountry());
                 }
             }
+            predicted.add(predictedCountry);
+            real.add(testVector.getCountry());
         }
     }
 }

@@ -95,7 +95,6 @@ public class Controller implements Initializable {
 
     public void onClassifyButton() {
         try {
-
             ArrayList<Integer> featuresToUse = new ArrayList<>();
             if(feature1.isSelected()) featuresToUse.add(1);
             if(feature2.isSelected()) featuresToUse.add(2);
@@ -107,6 +106,10 @@ public class Controller implements Initializable {
             if(feature8.isSelected()) featuresToUse.add(8);
             if(feature9.isSelected()) featuresToUse.add(9);
             if(feature10.isSelected()) featuresToUse.add(10);
+
+            if(Integer.parseInt(endParameter.getText()) > featureExtractionModule.getExtractedFeatures().size())
+                throw new FeatureExtractionModuleException("End parameter is bigger than number of features");
+
             List<FeaturesVector> features = featureExtractionModule.getExtractedFeatures().subList(Integer.parseInt(initialParameter.getText()),
                     Integer.parseInt(endParameter.getText()));
 
